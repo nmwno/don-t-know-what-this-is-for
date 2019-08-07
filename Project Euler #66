@@ -1,0 +1,44 @@
+#In python
+PeriodList=[]
+#For all n from 0 to 1000, this will store the period length of the continued fraction. If n is a perfect square, the period length is 0
+ContinuedFractionList=[]
+#For all n from 0 to 1000, this will store the continued fraction in the standard notation [a0, a1, a2, ...] until there is a repetition
+#Since there is a list for each n, this is a list of lists
+for D in range(1001):
+  a=D**.5
+  ContinuedFractionD=[int(a)]
+#this is a0
+  PeriodLength=0
+  if int(a)!=a:
+#we only calculate for irrational roots
+    repeat=True
+    a=int(a)
+    num=1
+#the numerator is 1 for our first continued fraction
+    b=a
+# b is the part of the expression that has sqrt(D) - b
+    SeenList=[(b,num)]
+#I'm using this to check for repeats to see if it's completed the periodic part
+    while repeat:
+      PeriodLength+=1
+#The I follow the process described on this page: https://projecteuler.net/problem=64 for finding successive a values
+#The idea is: you have 1/((num)/(sqrt(D)-b)). Ignore the 1, that's just always there and will be gotten by taking the reciprocal later
+#We multipley num/denom by the conjugate of denom: sqrt(D) + b. Now we have (num(sqrt(D)+b))/(d-b^2).
+#We divide and take the integer portion as our new a value (a1, a2, ...). 
+#The remainder from the division will be our numerator minus (d-b^2)*(integer part) (our new a value) by fraction operations
+
+      a=int(num/(D**.5-b))
+
+#takes takes the square root and subtracts the integer part. Takes the numerator and divides. The integer part of the division is the next value of a (a1, a2...)
+      num=int((D-b**2)/num)
+#This is just seeing if we can simplify the fraction by dividing the denominator by the numerator
+      b=-(b-num*a)
+#This is updating b by multiplying our denominator (which is for now called num, because we will be taking the reciprocal in a minute) by the integer portion of our division and subracting from the numerator.
+      ContinuedFractionD.append(a)
+      if (b,num) in SeenList:
+        repeat=False
+#checking to see if we've ever had this value of numerator with the same value of sqrt(D) - b
+      else:
+        SeenList.append((b,num))
+  PeriodList.append(PeriodLength)
+  ContinuedFractionList.append(ContinuedFractionD)
